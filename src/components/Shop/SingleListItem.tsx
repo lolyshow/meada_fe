@@ -80,7 +80,7 @@ const SingleListItem = ({ item }: { item: Product }) => {
 
             <button
               onClick={() => handleAddToCart()}
-              className="inline-flex font-medium text-custom-sm py-[7px] px-5 rounded-[5px] bg-blue text-white ease-out duration-200 hover:bg-blue-dark"
+              className="inline-flex bg-[#afc946] hover:bg-[#5d6a2b] font-medium text-custom-sm py-[7px] px-5 rounded-[5px] text-white ease-out duration-200"
             >
               Add to cart
             </button>

@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import Image from "next/image";
 import { Product } from "@/types/product";
 import { useModalContext } from "@/app/context/QuickViewModalContext";
@@ -11,10 +11,15 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
 import Link from "next/link";
 
+import { useAppDispatch, useAppSelector, selectProducts, selectProductsLoading } from "@/redux/store";
+import { fetchProducts } from "@/redux/features/products-slice";
+
+
+
 const ProductItem = ({ item }: { item: Product }) => {
   const { openModal } = useModalContext();
-
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
+  
 
   // update the QuickView state
   const handleQuickViewUpdate = () => {
@@ -48,7 +53,7 @@ const ProductItem = ({ item }: { item: Product }) => {
   return (
     <div className="group">
       <div className="relative overflow-hidden flex items-center justify-center rounded-lg bg-[#F6F7FB] min-h-[270px] mb-4">
-        <Image src={item.imgs.previews[0]} alt="" width={250} height={250} />
+        <Image src={"/images/products/product-1-bg-1.png"} alt="" width={250} height={250} />
 
         <div className="absolute left-0 bottom-0 translate-y-full w-full flex items-center justify-center gap-2.5 pb-5 ease-linear duration-200 group-hover:translate-y-0">
           <button
@@ -85,7 +90,7 @@ const ProductItem = ({ item }: { item: Product }) => {
 
           <button
             onClick={() => handleAddToCart()}
-            className="inline-flex font-medium text-custom-sm py-[7px] px-5 rounded-[5px] bg-blue text-white ease-out duration-200 hover:bg-blue-dark"
+            className="inline-flex font-medium text-custom-sm py-[7px] px-5 rounded-[5px] bg-[#afc946] hover:bg-[#5d6a2b] text-white ease-out duration-200"
           >
             Add to cart
           </button>
@@ -149,7 +154,7 @@ const ProductItem = ({ item }: { item: Product }) => {
           />
         </div>
 
-        <p className="text-custom-sm">({item.reviews})</p>
+        <p className="text-custom-sm">({item.totalrating})</p>
       </div>
 
       <h3
@@ -160,7 +165,7 @@ const ProductItem = ({ item }: { item: Product }) => {
       </h3>
 
       <span className="flex items-center gap-2 font-medium text-lg">
-        <span className="text-dark">${item.discountedPrice}</span>
+        <span className="text-dark">${item.price}</span>
         <span className="text-dark-4 line-through">${item.price}</span>
       </span>
     </div>

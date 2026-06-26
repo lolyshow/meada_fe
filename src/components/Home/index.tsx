@@ -1,5 +1,5 @@
 import React from "react";
-import Hero from "./Hero";
+import Hero from "./Hero/Hero";
 import Categories from "./Categories";
 import NewArrival from "./NewArrivals";
 import PromoBanner from "./PromoBanner";
@@ -12,7 +12,7 @@ const Home = () => {
   return (
     <main>
       <Hero />
-      <Categories />
+      {/* <Categories /> */}
       <NewArrival />
       <PromoBanner />
       <BestSeller />
