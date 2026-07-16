@@ -31,6 +31,12 @@ export async function apiRequest<TResponse, TBody = unknown>(
     ...headers,
   };
 
+  // ✅ restore token from localStorage if memory is empty
+  if (!accessToken && typeof window !== "undefined") {
+    const stored = localStorage.getItem("access_token");
+    if (stored) tokenStore.set(stored);
+  }
+
   if (!options.public && accessToken) {
     requestHeaders["Authorization"] = `Bearer ${accessToken}`;
   }

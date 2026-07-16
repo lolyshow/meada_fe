@@ -1,4 +1,4 @@
-const tokenVar = process.env.TOKENVAR;
+const tokenVar = 'token'//process.env.TOKENVAR;
 
 type UtilType = {
     tokenVar:string

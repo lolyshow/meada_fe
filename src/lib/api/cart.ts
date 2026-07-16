@@ -6,7 +6,7 @@ import { Cart } from "@/types/product";
 // ─── Get Cart ─────────────────────────────────────────────────────────────────
 
 export async function getCart(): Promise<Cart> {
-  return api.get<Cart>("/cart");
+  return api.get<Cart>("/auth/cart");
 }
 
 // ─── Add to Cart ──────────────────────────────────────────────────────────────
@@ -16,7 +16,7 @@ export interface AddToCartRequest {
 }
 
 export async function addToCart(payload: AddToCartRequest): Promise<Cart> {
-  return api.post<Cart, AddToCartRequest>("/cart", payload);
+  return api.post<Cart, AddToCartRequest>("/user/cart", payload);
 }
 
 // ─── Remove Item ──────────────────────────────────────────────────────────────

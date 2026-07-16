@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { AuthUser } from "@/types/api";
 import * as authApi from "@/lib/api/auth";
 import { utils } from "@/utils/constants";
+import { tokenStore } from "@/lib/api/client";
 
 // ─── State ────────────────────────────────────────────────────────────────────
 
@@ -35,6 +36,9 @@ export const login = createAsyncThunk(
         return rejectWithValue({ message: data.message ?? "Login failed", code: data.status });
       }
       else if(data.status === 200) {
+        tokenStore.set(data.token);
+        localStorage.setItem("access_token", data.token);
+        console.log("my token variable",utils.tokenVar)
         localStorage.setItem(utils.tokenVar, data?.token);
       }
       return data;

@@ -5,7 +5,7 @@ import Image from "next/image";
 
 const SingleItem = ({ item, removeItemFromCart }) => {
   const dispatch = useDispatch<AppDispatch>();
-
+  console.log(item?.product?.title)
   const handleRemoveFromCart = () => {
     dispatch(removeItemFromCart(item.id));
   };
@@ -19,9 +19,10 @@ const SingleItem = ({ item, removeItemFromCart }) => {
 
         <div>
           <h3 className="font-medium text-dark mb-1 ease-out duration-200 hover:text-blue">
-            <a href="#"> {item.title} </a>
+            <a href="#"> {item?.product?.title} </a>
           </h3>
-          <p className="text-custom-sm">Price: ${item.discountedPrice}</p>
+          <p className="text-custom-sm">Price: ₦{item.price}</p>
+          <p className="text-custom-sm">Qty: {item?.count}</p>
         </div>
       </div>
 
