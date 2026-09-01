@@ -5,8 +5,6 @@ import testimonialsData from "./testimonialsData";
 import Image from "next/image";
 
 // Import Swiper styles
-import "swiper/css/navigation";
-import "swiper/css";
 import SingleItem from "./SingleItem";
 
 const Testimonials = () => {
@@ -23,7 +21,7 @@ const Testimonials = () => {
   }, []);
 
   return (
-    <section className="overflow-hidden pb-16.5">
+    <section className="overflow-hidden pb-16.5 mt-14">
       <div className="max-w-[1170px] w-full mx-auto px-4 sm:px-8 xl:px-0">
         <div className="">
           <div className="swiper testimonial-carousel common-carousel p-5">

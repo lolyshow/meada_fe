@@ -45,6 +45,7 @@ export const cart = createSlice({
     },
     removeItemFromCart: (state, action: PayloadAction<number>) => {
       const itemId = action.payload;
+      
       state.items = state.items.filter((item) => item.id !== itemId);
     },
     updateCartItemQuantity: (

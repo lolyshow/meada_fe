@@ -22,7 +22,7 @@ export async function addToCart(payload: AddToCartRequest): Promise<Cart> {
 // ─── Remove Item ──────────────────────────────────────────────────────────────
 
 export async function removeFromCart(productId: string): Promise<any> {
-  return api.delete(`/cart/${productId}`);
+  return api.delete(`/user/cart/${productId}`);
 }
 
 // ─── Clear Cart ───────────────────────────────────────────────────────────────

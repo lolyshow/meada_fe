@@ -16,12 +16,14 @@ import EmptyCart from "./EmptyCart";
 const CartSidebarModal = () => {
   const { isCartModalOpen, closeCartModal } = useCartModalContext();
   const dispatch = useAppDispatch();
-
+  
   // ✅ API cart state
   const cartItems = useAppSelector(selectCartItems);
   const totalPrice = useAppSelector(selectCartTotal);
   const isLoading = useAppSelector(selectCartLoading);
-
+  useEffect(() => {
+  console.log("CART ITEMS CHANGED:", cartItems);
+}, [cartItems]);
   // fetch latest cart whenever the modal opens
   useEffect(() => {
     if (isCartModalOpen) {
@@ -29,6 +31,16 @@ const CartSidebarModal = () => {
     }
   }, [isCartModalOpen, dispatch]);
 
+
+
+  console.log(
+  "CART PRODUCT:",
+  cartItems.map((item) => ({
+    cartItemId: item._id,
+    productId: item.product?._id,
+    title: item.product?.title,
+  }))
+);
   // close modal on outside click
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -46,8 +58,8 @@ const CartSidebarModal = () => {
     };
   }, [isCartModalOpen, closeCartModal]);
 
-  const handleRemoveItem = (productId: string) => {
-    dispatch(removeFromCart(productId));
+  const handleRemoveItem = (cartProductId: string) => {
+    dispatch(removeFromCart(cartProductId));
   };
 
   return (
@@ -92,7 +104,7 @@ const CartSidebarModal = () => {
                   <SingleItem
                     key={cartProduct._id}
                     item={cartProduct}
-                    removeItemFromCart={() => handleRemoveItem(cartProduct.product._id)}
+                    removeItemFromCart={() => handleRemoveItem(cartProduct._id)}
                   />
                 ))
               ) : (

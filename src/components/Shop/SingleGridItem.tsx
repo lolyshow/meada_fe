@@ -10,7 +10,7 @@ import { AppDispatch } from "@/redux/store";
 import Link from "next/link";
 import Image from "next/image";
 
-const SingleGridItem = ({ item }: { item: Product }) => {
+const SingleGridItem = ({ item }) => {
   const { openModal } = useModalContext();
 
   const dispatch = useDispatch<AppDispatch>();

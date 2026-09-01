@@ -10,7 +10,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { addItemToWishlist } from "@/redux/features/wishlist-slice";
 
-const SingleItem = ({ item }: { item: Product }) => {
+const SingleItem = ({ item }) => {
   const { openModal } = useModalContext();
   const dispatch = useDispatch<AppDispatch>();
 

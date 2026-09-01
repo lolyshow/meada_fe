@@ -24,18 +24,21 @@ export const fetchCart = createAsyncThunk(
     } catch (err: any) {
       return rejectWithValue(err.message ?? "Failed to fetch cart");
     }
-  }
+  },
 );
 
 export const addToCart = createAsyncThunk(
   "cartApi/add",
-  async (payload: { _id: string; count: number; color?: string }, { rejectWithValue }) => {
+  async (
+    payload: { _id: string; count: number; color?: string },
+    { rejectWithValue },
+  ) => {
     try {
       return await cartApi.addToCart({ cart: [payload] });
     } catch (err: any) {
       return rejectWithValue(err.message ?? "Failed to add to cart");
     }
-  }
+  },
 );
 
 export const removeFromCart = createAsyncThunk(
@@ -47,7 +50,7 @@ export const removeFromCart = createAsyncThunk(
     } catch (err: any) {
       return rejectWithValue(err.message ?? "Failed to remove from cart");
     }
-  }
+  },
 );
 
 export const clearCart = createAsyncThunk(
@@ -58,7 +61,7 @@ export const clearCart = createAsyncThunk(
     } catch (err: any) {
       return rejectWithValue(err.message ?? "Failed to clear cart");
     }
-  }
+  },
 );
 
 const cartApiSlice = createSlice({
@@ -95,16 +98,35 @@ const cartApiSlice = createSlice({
       });
 
     builder.addCase(removeFromCart.fulfilled, (state, action) => {
-      if (state.cart) {
-        state.cart.products = state.cart.products.filter(
-          (p) => p.product._id !== action.payload
-        );
-        state.cart.cartTotal = state.cart.products.reduce(
-          (acc, p) => acc + p.price * p.count,
-          0
-        );
-      }
-    });
+  console.log("REMOVE SUCCESS:", action.payload);
+  console.log("state.cart.products:", state.cart.products);
+
+  if (state.cart) {
+    console.log(
+      "PRODUCT IDS:",
+      state.cart.products.map((p) => ({
+        productId: p.product?._id,
+        productIdType: typeof p.product?._id,
+        actionId: action.payload,
+        actionIdType: typeof action.payload,
+      }))
+    );
+
+    state.cart.products = state.cart.products.filter(
+      (p) => String(p?._id) !== String(action.payload)
+    );
+
+    state.cart.cartTotal = state.cart.products.reduce(
+      (total, p) => total + p.price * p.count,
+      0
+    );
+
+    console.log(
+      "REMAINING PRODUCTS:",
+      state.cart.products.map((p) => p.product?._id)
+    );
+  }
+})
 
     builder.addCase(clearCart.fulfilled, (state) => {
       state.cart = null;

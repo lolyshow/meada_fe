@@ -35,14 +35,16 @@ const ProductItem = ({ item }: { item: Product }) => {
 
   // ── Wishlist ──────────────────────────────────────────────────────────────
   const handleItemToWishList = () => {
-    dispatch(
-      addItemToWishlist({
-        ...item,
-        status: "available",
-        quantity: 1,
-      })
-    );
-  };
+  dispatch(
+    addItemToWishlist({
+      ...item,
+      id: item._id,
+      discountedPrice: item.price,
+      status: "available",
+      quantity: 1,
+    })
+  );
+};
 
   // ── Product details ───────────────────────────────────────────────────────
   const handleProductDetails = () => {

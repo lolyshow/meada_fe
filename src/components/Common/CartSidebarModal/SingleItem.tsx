@@ -2,19 +2,31 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
 import Image from "next/image";
+import { removeFromCart } from "@/redux/features/cart-api-slice";
+import toast from "react-hot-toast";
 
 const SingleItem = ({ item, removeItemFromCart }) => {
   const dispatch = useDispatch<AppDispatch>();
-  console.log(item?.product?.title)
-  const handleRemoveFromCart = () => {
-    dispatch(removeItemFromCart(item.id));
+  const handleRemoveFromCart = async () => {
+    const result = await dispatch(removeFromCart(item._id));
+
+    if (removeFromCart.fulfilled.match(result)) {
+      toast.success(`${item.title} added to cart!`);
+    } else {
+      toast.error("Failed to add to cart. Please login first.");
+    }
   };
 
   return (
     <div className="flex items-center justify-between gap-5">
       <div className="w-full flex items-center gap-6">
         <div className="flex items-center justify-center rounded-[10px] bg-gray-3 max-w-[90px] w-full h-22.5">
-          <Image src={"/images/logo/logo.svg"} alt="product" width={100} height={100} />
+          <Image
+            src={"/images/logo/logo.svg"}
+            alt="product"
+            width={100}
+            height={100}
+          />
         </div>
 
         <div>

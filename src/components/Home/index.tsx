@@ -14,9 +14,11 @@ const Home = () => {
       <Hero />
       {/* <Categories /> */}
       <NewArrival />
+      {/* <NewArrival /> */}
       <PromoBanner />
-      <BestSeller />
-      <CounDown />
+      {/* <BestSeller /> */}
+      {/* <CounDown /> */}
+      <NewArrival />
       <Testimonials />
       <Newsletter />
     </main>

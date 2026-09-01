@@ -11,7 +11,7 @@ import { AppDispatch } from "@/redux/store";
 import Link from "next/link";
 import Image from "next/image";
 
-const SingleListItem = ({ item }: { item: Product }) => {
+const SingleListItem = ({ item }) => {
   const { openModal } = useModalContext();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -22,6 +22,7 @@ const SingleListItem = ({ item }: { item: Product }) => {
 
   // add to cart
   const handleAddToCart = () => {
+    console.log("add to cart from singleListItem", item)
     dispatch(
       addItemToCart({
         ...item,

@@ -44,11 +44,13 @@ export interface Product {
   variants?: ProductVariant[];
 }
 
-export interface ProductImage {
-  url: string;
-  alt: string;
-  isPrimary: boolean;
-}
+// export interface ProductImage {
+//   url: string;
+//   alt: string;
+//   isPrimary: boolean;
+//   _id?: string;
+//   public_id: string;
+// }
 
 export interface ProductVariant {
   id: string;
@@ -85,14 +87,26 @@ export interface PaginatedResponse<T> {
 
 // ─── Cart ────────────────────────────────────────────────────────────────────
 
+export interface ProductImage {
+  _id?: string;
+  public_id: string;
+  url: string;
+}
+
 export interface CartItem {
-  id: string;
-  product: Pick<Product, "id" | "name" | "images" | "price" | "slug">;
-  variantId?: string;
-  variantLabel?: string;
+  _id: string;
+  title: string;
+  description: string;
+  price: number;
+  category: string;
   quantity: number;
-  unitPrice: number;
-  totalPrice: number;
+  sold?: number;
+  images: ProductImage[];
+  totalrating?: string;
+  ratings?: any[];
+  createdAt?: string;
+  updatedAt?: string;
+  count: number;
 }
 
 export interface Cart {

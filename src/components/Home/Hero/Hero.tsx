@@ -3,7 +3,7 @@ import CustomFancyBtn from "./CustomFancyBtn";
 
 function Hero() {
   return (
-    <div className="relative md:mt-10 w-[100vw] px-5 h-[50vh] md:h-[80vh] bg">
+    <div className="relative  w-[100vw] px-5 md:h-[80vh] bg">
       <div className="w-[90%] md:w-[80%] mx-auto h-[100%] flex flex-col items-start justify-center">
         <div
           data-aos="fade-right"
