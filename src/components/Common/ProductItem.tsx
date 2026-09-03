@@ -1,149 +1,278 @@
 "use client";
+
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
+import toast from "react-hot-toast";
+
 import { Product } from "@/types/product";
 import { useModalContext } from "@/app/context/QuickViewModalContext";
+
 import { updateQuickView } from "@/redux/features/quickView-slice";
 import { addItemToWishlist } from "@/redux/features/wishlist-slice";
 import { updateproductDetails } from "@/redux/features/product-details";
-import { addToCart } from "@/redux/features/cart-api-slice"; // ✅ API cart
+import { addToCart } from "@/redux/features/cart-api-slice";
 import { useAppDispatch } from "@/redux/store";
-import Link from "next/link";
-import toast from "react-hot-toast"; // optional — remove if not installed
 
-const ProductItem = ({ item }: { item: Product }) => {
+interface ProductItemProps {
+  item: Product;
+}
+
+const ProductItem = ({ item }: ProductItemProps) => {
   const { openModal } = useModalContext();
   const dispatch = useAppDispatch();
 
-  // ── Quick view ────────────────────────────────────────────────────────────
-  const handleQuickViewUpdate = () => {
-    dispatch(updateQuickView({ ...item }));
-  };
-
-  // ── Add to cart (API) ─────────────────────────────────────────────────────
-  const handleAddToCart = async () => {
-    const result = await dispatch(
-      addToCart({ _id: item._id, count: 1 })
-    );
-
-    if (addToCart.fulfilled.match(result)) {
-      toast.success(`${item.title} added to cart!`);
-    } else {
-      toast.error("Failed to add to cart. Please login first.");
-    }
-  };
-
-  // ── Wishlist ──────────────────────────────────────────────────────────────
-  const handleItemToWishList = () => {
-  dispatch(
-    addItemToWishlist({
-      ...item,
-      id: item._id,
-      discountedPrice: item.price,
-      status: "available",
-      quantity: 1,
-    })
-  );
-};
-
-  // ── Product details ───────────────────────────────────────────────────────
-  const handleProductDetails = () => {
-    dispatch(updateproductDetails({ ...item }));
-  };
-
-  // ── Image: use first API image or fallback ────────────────────────────────
   const productImage =
     item.images?.length > 0
       ? item.images[0].url
       : "/images/products/product-1-bg-1.png";
 
+  const isOutOfStock = item.quantity <= 0;
+  const isLowStock = item.quantity > 0 && item.quantity <= 3;
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Quick View
+  // ─────────────────────────────────────────────────────────────────────────
+
+  const handleQuickView = () => {
+    dispatch(updateQuickView({ ...item }));
+    openModal();
+  };
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Add To Cart
+  // ─────────────────────────────────────────────────────────────────────────
+
+  const handleAddToCart = async () => {
+    if (isOutOfStock) {
+      toast.error("This product is currently out of stock.");
+      return;
+    }
+
+    const result = await dispatch(
+      addToCart({
+        _id: item._id,
+        count: 1,
+      })
+    );
+
+    if (addToCart.fulfilled.match(result)) {
+      toast.success(`${item.title} added to cart!`);
+    } else {
+      toast.error("Please login to add items to your cart.");
+    }
+  };
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Wishlist
+  // ─────────────────────────────────────────────────────────────────────────
+
+  const handleAddToWishlist = () => {
+    dispatch(
+      addItemToWishlist({
+        ...item,
+        id: item._id,
+        discountedPrice: item.price,
+        status: "available",
+        quantity: 1,
+      })
+    );
+
+    toast.success(`${item.title} added to wishlist!`);
+  };
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Product Details
+  // ─────────────────────────────────────────────────────────────────────────
+
+  const handleProductDetails = () => {
+    dispatch(updateproductDetails({ ...item }));
+  };
+
   return (
-    <div className="group">
-      <div className="relative overflow-hidden flex items-center justify-center rounded-lg bg-[#F6F7FB] min-h-[270px] mb-4">
-        <Image
-          src={productImage}
-          alt={item.title}
-          width={250}
-          height={250}
-          className="object-cover w-full h-full"
-        />
+    <article className="group">
 
-        <div className="absolute left-0 bottom-0 translate-y-full w-full flex items-center justify-center gap-2.5 pb-5 ease-linear duration-200 group-hover:translate-y-0">
-          {/* Quick view */}
-          <button
-            onClick={() => {
-              openModal();
-              handleQuickViewUpdate();
-            }}
-            aria-label="Quick view"
-            className="flex items-center justify-center w-9 h-9 rounded-[5px] shadow-1 ease-out duration-200 text-dark bg-white hover:text-blue"
-          >
-            <svg className="fill-current" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path fillRule="evenodd" clipRule="evenodd" d="M8.00016 5.5C6.61945 5.5 5.50016 6.61929 5.50016 8C5.50016 9.38071 6.61945 10.5 8.00016 10.5C9.38087 10.5 10.5002 9.38071 10.5002 8C10.5002 6.61929 9.38087 5.5 8.00016 5.5ZM6.50016 8C6.50016 7.17157 7.17174 6.5 8.00016 6.5C8.82859 6.5 9.50016 7.17157 9.50016 8C9.50016 8.82842 8.82859 9.5 8.00016 9.5C7.17174 9.5 6.50016 8.82842 6.50016 8Z" fill=""/>
-              <path fillRule="evenodd" clipRule="evenodd" d="M8.00016 2.16666C4.99074 2.16666 2.96369 3.96946 1.78721 5.49791L1.76599 5.52546C1.49992 5.87102 1.25487 6.18928 1.08862 6.5656C0.910592 6.96858 0.833496 7.40779 0.833496 8C0.833496 8.5922 0.910592 9.03142 1.08862 9.4344C1.25487 9.81072 1.49992 10.129 1.76599 10.4745L1.78721 10.5021C2.96369 12.0305 4.99074 13.8333 8.00016 13.8333C11.0096 13.8333 13.0366 12.0305 14.2131 10.5021L14.2343 10.4745C14.5004 10.129 14.7455 9.81072 14.9117 9.4344C15.0897 9.03142 15.1668 8.5922 15.1668 8C15.1668 7.40779 15.0897 6.96858 14.9117 6.5656C14.7455 6.18927 14.5004 5.87101 14.2343 5.52545L14.2131 5.49791C13.0366 3.96946 11.0096 2.16666 8.00016 2.16666ZM2.57964 6.10786C3.66592 4.69661 5.43374 3.16666 8.00016 3.16666C10.5666 3.16666 12.3344 4.69661 13.4207 6.10786C13.7131 6.48772 13.8843 6.7147 13.997 6.9697C14.1023 7.20801 14.1668 7.49929 14.1668 8C14.1668 8.50071 14.1023 8.79199 13.997 9.0303C13.8843 9.28529 13.7131 9.51227 13.4207 9.89213C12.3344 11.3034 10.5666 12.8333 8.00016 12.8333C5.43374 12.8333 3.66592 11.3034 2.57964 9.89213C2.28725 9.51227 2.11599 9.28529 2.00334 9.0303C1.89805 8.79199 1.8335 8.50071 1.8335 8C1.8335 7.49929 1.89805 7.20801 2.00334 6.9697C2.11599 6.7147 2.28725 6.48772 2.57964 6.10786Z" fill=""/>
-            </svg>
-          </button>
+      {/* ────────────────────────────────────────────────────────────────────
+          Product Image
+      ──────────────────────────────────────────────────────────────────── */}
 
-          {/* Add to cart */}
-          <button
-            onClick={handleAddToCart}
-            className="inline-flex font-medium text-custom-sm py-[7px] px-5 rounded-[5px] bg-[#afc946] hover:bg-[#5d6a2b] text-white ease-out duration-200"
-          >
-            Add to cart
-          </button>
+      <div className="relative mb-4 overflow-hidden rounded-xl border border-gray-100 bg-[#F7F8F4]">
 
-          {/* Wishlist */}
-          <button
-            onClick={handleItemToWishList}
-            aria-label="Add to wishlist"
-            className="flex items-center justify-center w-9 h-9 rounded-[5px] shadow-1 ease-out duration-200 text-dark bg-white hover:text-blue"
-          >
-            <svg className="fill-current" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path fillRule="evenodd" clipRule="evenodd" d="M3.74949 2.94946C2.6435 3.45502 1.83325 4.65749 1.83325 6.0914C1.83325 7.55633 2.43273 8.68549 3.29211 9.65318C4.0004 10.4507 4.85781 11.1118 5.694 11.7564C5.89261 11.9095 6.09002 12.0617 6.28395 12.2146C6.63464 12.491 6.94747 12.7337 7.24899 12.9099C7.55068 13.0862 7.79352 13.1667 7.99992 13.1667C8.20632 13.1667 8.44916 13.0862 8.75085 12.9099C9.05237 12.7337 9.3652 12.491 9.71589 12.2146C9.90982 12.0617 10.1072 11.9095 10.3058 11.7564C11.142 11.1118 11.9994 10.4507 12.7077 9.65318C13.5671 8.68549 14.1666 7.55633 14.1666 6.0914C14.1666 4.65749 13.3563 3.45502 12.2503 2.94946C11.1759 2.45832 9.73214 2.58839 8.36016 4.01382C8.2659 4.11175 8.13584 4.16709 7.99992 4.16709C7.864 4.16709 7.73393 4.11175 7.63967 4.01382C6.26769 2.58839 4.82396 2.45832 3.74949 2.94946Z" fill=""/>
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      {/* Rating */}
-      <div className="flex items-center gap-2.5 mb-2">
-        <div className="flex items-center gap-1">
-          {[...Array(5)].map((_, i) => (
+        {/* Product Image */}
+        <Link
+          href={`/shop-details/${item._id}`}
+          onClick={handleProductDetails}
+          className="block"
+        >
+          <div className="relative aspect-square w-full">
             <Image
-              key={i}
-              src="/images/icons/icon-star.svg"
-              alt="star"
-              width={14}
-              height={14}
+              src={productImage}
+              alt={item.title}
+              fill
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+              className="object-cover transition duration-500 group-hover:scale-105"
             />
-          ))}
-        </div>
-        <p className="text-custom-sm">({item.totalrating})</p>
-      </div>
+          </div>
+        </Link>
 
-      {/* Title */}
-      <h3
-        className="font-medium text-dark ease-out duration-200 hover:text-blue mb-1.5 cursor-pointer"
-        onClick={handleProductDetails}
-      >
-        <Link href={`/shop-details/${item._id}`}>{item.title}</Link>
-      </h3>
-
-      {/* Price */}
-      <span className="flex items-center gap-2 font-medium text-lg">
-        <span className="text-dark">₦{item.price.toLocaleString()}</span>
-        {item.quantity <= 3 && (
-          <span className="text-xs font-normal text-red-500 bg-red-50 px-2 py-0.5 rounded-full">
-            Only {item.quantity} left!
+        {/* Low Stock Badge */}
+        {isLowStock && (
+          <span className="absolute left-3 top-3 rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold text-red-500 shadow-sm">
+            Only {item.quantity} left
           </span>
         )}
-      </span>
 
-      {/* Out of stock */}
-      {item.quantity === 0 && (
-        <span className="text-xs text-red-500 mt-1 block">Out of stock</span>
-      )}
-    </div>
+        {/* Out Of Stock Badge */}
+        {isOutOfStock && (
+          <span className="absolute left-3 top-3 rounded-full bg-red-500 px-2.5 py-1 text-[11px] font-semibold text-white">
+            Out of stock
+          </span>
+        )}
+
+        {/* Wishlist */}
+        <button
+          type="button"
+          onClick={handleAddToWishlist}
+          aria-label="Add to wishlist"
+          className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-white text-gray-700 shadow-sm transition hover:bg-[#AFC946] hover:text-white"
+        >
+          <svg
+            width="17"
+            height="17"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
+
+        {/* Desktop Hover Actions */}
+        {!isOutOfStock && (
+          <div className="absolute bottom-3 left-0 hidden w-full justify-center gap-2 px-3 sm:flex">
+
+            {/* Quick View */}
+            <button
+              type="button"
+              onClick={handleQuickView}
+              aria-label="Quick view"
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-gray-700 shadow-md transition hover:bg-[#AFC946] hover:text-white"
+            >
+              <svg
+                width="17"
+                height="17"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="3"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                />
+              </svg>
+            </button>
+
+            {/* Add To Cart */}
+            <button
+              type="button"
+              onClick={handleAddToCart}
+              className="rounded-full bg-[#AFC946] px-5 py-2.5 text-xs font-semibold text-white shadow-md transition hover:bg-[#96AE32]"
+            >
+              Add to Cart
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* ────────────────────────────────────────────────────────────────────
+          Product Information
+      ──────────────────────────────────────────────────────────────────── */}
+
+      <div className="px-0.5">
+
+        {/* Rating */}
+        <div className="mb-1.5 flex items-center gap-2">
+
+          <div className="flex items-center gap-0.5">
+            {[...Array(5)].map((_, index) => (
+              <svg
+                key={index}
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="#F5B942"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M12 2.5l2.93 5.94 6.56.95-4.75 4.63 1.12 6.54L12 17.47l-5.86 3.09 1.12-6.54-4.75-4.63 6.56-.95L12 2.5Z" />
+              </svg>
+            ))}
+          </div>
+
+          <span className="text-xs text-gray-400">
+            ({item.totalrating || "0"})
+          </span>
+        </div>
+
+        {/* Product Title */}
+        <Link
+          href={`/shop-details/${item._id}`}
+          onClick={handleProductDetails}
+          className="block"
+        >
+          <h3 className="line-clamp-2 min-h-[42px] text-sm font-semibold leading-5 text-gray-900 transition group-hover:text-[#7E9828] md:text-[15px]">
+            {item.title}
+          </h3>
+        </Link>
+
+        {/* Price */}
+        <div className="mt-2 flex items-center justify-between gap-2">
+
+          <span className="text-base font-bold text-gray-900 md:text-lg">
+            ₦{item.price.toLocaleString()}
+          </span>
+
+          {/* Mobile Add To Cart */}
+          {!isOutOfStock && (
+            <button
+              type="button"
+              onClick={handleAddToCart}
+              className="rounded-full bg-[#AFC946] px-3 py-1.5 text-[11px] font-semibold text-white transition hover:bg-[#96AE32] sm:hidden"
+            >
+              Add
+            </button>
+          )}
+        </div>
+
+        {/* Stock Status */}
+        {isOutOfStock && (
+          <p className="mt-1 text-xs font-medium text-red-500">
+            Currently unavailable
+          </p>
+        )}
+
+        {isLowStock && (
+          <p className="mt-1 text-xs text-gray-400">
+            Hurry, only {item.quantity} remaining
+          </p>
+        )}
+      </div>
+    </article>
   );
 };
 

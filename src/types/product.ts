@@ -38,3 +38,18 @@ export interface Cart {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface ProductPagination {
+  currentPage: number;
+  totalPages: number;
+  totalProducts: number;
+  limit: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+export interface ShopProductsResponse {
+  success: boolean;
+  products: Product[];
+  pagination: ProductPagination;
+}
+
