@@ -4,10 +4,11 @@ import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Breadcrumb from "../Common/Breadcrumb";
 // import { SingleGridItem } from "./SingleGridItem";
-import CustomSelect from "../ShopWithSidebar/CustomSelect";
+// import CustomSelect from "../ShopWithSidebar/CustomSelect";
 import { Product } from "@/types/product";
 import { getShopProducts } from "@/lib/api/products";
 import SingleGridItem from "../Shop/SingleGridItem";
+import CustomSelect from "../CustomSelect";
 
 const ShopPage = () => {
   const searchParams = useSearchParams();
